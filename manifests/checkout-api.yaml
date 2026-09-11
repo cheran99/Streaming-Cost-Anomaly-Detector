@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-api
+  namespace: cost-demo
+  labels:
+    team: payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkout-api
+  template:
+    metadata:
+      labels:
+        app: checkout-api
+    spec:
+      containers:
+      - name: checkout-api
+        image: nginx:alpine
+        resources:
+          requests:
+            cpu: "4"
+            memory: "2Gi"
+          limits:
+            cpu: "4"
+            memory: "2Gi"

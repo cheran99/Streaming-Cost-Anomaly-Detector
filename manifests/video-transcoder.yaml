@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-transcoder
+  namespace: cost-demo
+  labels:
+    team: media-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-transcoder
+  template:
+    metadata:
+      labels:
+        app: video-transcoder
+    spec:
+      containers:
+      - name: video-transcoder
+        image: polinux/stress
+        command: ["stress"]
+        args: ["--cpu", "1", "--timeout", "999999s"]
+        resources:
+          requests:
+            cpu: "1"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "512Mi"

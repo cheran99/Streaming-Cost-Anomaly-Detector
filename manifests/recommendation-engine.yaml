@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation-engine
+  namespace: cost-demo
+  labels:
+    team: personalization
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recommendation-engine
+  template:
+    metadata:
+      labels:
+        app: recommendation-engine
+    spec:
+      containers:
+      - name: recommendation-engine
+        image: polinux/stress
+        command: ["stress"]
+        args: ["--cpu", "1", "--timeout", "20s"]
+        resources:
+          requests:
+            cpu: "2"
+            memory: "1Gi"
+          limits:
+            cpu: "2"
+            memory: "1Gi"
+      restartPolicy: Always
