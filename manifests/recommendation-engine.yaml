@@ -18,8 +18,8 @@ spec:
       containers:
       - name: recommendation-engine
         image: polinux/stress
-        command: ["stress"]
-        args: ["--cpu", "1", "--timeout", "20s"]
+        command: ["/bin/sh", "-c"]
+        args: ["while true; do stress --cpu 2 --timeout 120s; sleep 120; done"]
         resources:
           requests:
             cpu: "2"
