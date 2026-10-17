@@ -3,9 +3,9 @@
 - The readings, for example, `0.0049` means that a pod is using 0.49% of reserved memory.
 
 ```
-sum(container_memory_working_set_bytes{namespace="cost-demo", container != ""}) by (pod)
+sum(container_memory_working_set_bytes{namespace="cost-demo", container != ""}) by (container)
 /
-sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="memory"}) by (pod)
+sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="memory"}) by (container)
 ```
 
 # Query 2:
@@ -26,23 +26,23 @@ sum(kube_node_status_allocatable{resource="cpu"})
 
 ## Query 3a: Core CPU Utilisation:
 ```
-sum(rate(container_cpu_usage_seconds_total{namespace="cost-demo", container != ""}[120s]))by (pod)
+sum(rate(container_cpu_usage_seconds_total{namespace="cost-demo", container != ""}[120s]))by (container)
 /
-sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="cpu"}) by (pod)
+sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="cpu"}) by (container)
 ```
 
 ## Query 3b: Peak CPU:
 ```
-max_over_time(sum(rate(container_cpu_usage_seconds_total{namespace="cost-demo", container != ""}[120s]))by (pod)[5m:30s])
+max_over_time(sum(rate(container_cpu_usage_seconds_total{namespace="cost-demo", container != ""}[120s]))by (container)[5m:30s])
 /
-sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="cpu"}) by (pod)
+sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="cpu"}) by (container)
 ```
 
 ## Query 3c: Average CPU:
 ```
-avg_over_time(sum(rate(container_cpu_usage_seconds_total{namespace="cost-demo", container != ""}[120s]))by (pod)[5m:30s])
+avg_over_time(sum(rate(container_cpu_usage_seconds_total{namespace="cost-demo", container != ""}[120s]))by (container)[5m:30s])
 /
-sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="cpu"}) by (pod)
+sum(kube_pod_container_resource_requests{namespace="cost-demo", resource="cpu"}) by (container)
 ```
 
 # Query 4:
