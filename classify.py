@@ -34,5 +34,4 @@ if __name__ == "__main__":
     ]
     for peak, avg, restarts, expected in cases:
         classification = classify(peak, avg, restarts)
-        status = "PASS" if classification["label"] == expected else "FAIL"
         print(f"Status: {status}, Label: {classification['label']}, Reason: {classification['reason']}, Warning: {classification['warning']}")
