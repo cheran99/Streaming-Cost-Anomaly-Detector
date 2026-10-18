@@ -1,8 +1,18 @@
+import json
+import os
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+
+load_dotenv()
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+
 SYSTEM_PROMPT = """
    1. Explain each container's classification label that includes reason and warnings. Never change or override the label.
    2. Use only the numbers in the input. Never invent or calculate new ones.
    3. Do not estimate costs; the input contains no cost data.
-   4. Mention restarts only when warning is present.
+   4. Mention restarts only when warning is present. If there's no warning, say nothing about warnings.
    5. For missing-data / insufficient-data: do not guess a cause or recommend resizing. Recommend checking that Prometheus is collecting metrics for that container instead.
    6. Audience: Site Reliability Engineering team. Keep each container to 2-3 sentences."""
 
@@ -20,6 +30,30 @@ def prepare(report):
             item["warning"] = c["warning"]
         slim.append(item)
     return slim
+
+
+def narrate(report):
+    prepared = prepare(report)
+    response = client.messages.create(
+        model="claude-haiku-5-5",
+        max_tokens=500,
+        thinking={
+            "type": "disabled"
+        },
+        system=SYSTEM_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": json.dumps(prepared)
+            }
+        ],
+    )
+    if response.stop_reason == "max_tokens":
+        raise RuntimeError("Narration generation hit your token cap. Reduce the report size or increase max_tokens.")
+    print("DEBUG output tokens:", response.usage.output_tokens)
+    texts = [block.text for block in response.content if block.type == "text"]
+    return "\n".join(texts)
+
 
 if __name__ == "__main__":
     fake_report = [

@@ -1,5 +1,6 @@
 from prom_client import get_prometheus
 from classify import classify
+from narrate import narrate
 
 
 def main():
@@ -28,4 +29,6 @@ def main():
     return report
 
 if __name__ == "__main__":
-    main()
+    container_report = main()
+    summary = narrate(container_report)
+    print(summary)
