@@ -50,7 +50,6 @@ def narrate(report):
     )
     if response.stop_reason == "max_tokens":
         raise RuntimeError("Narration generation hit your token cap. Reduce the report size or increase max_tokens.")
-    print("DEBUG output tokens:", response.usage.output_tokens)
     texts = [block.text for block in response.content if block.type == "text"]
     return "\n".join(texts)
 
