@@ -1,0 +1,85 @@
+<html>
+    <head>
+    <title>
+    Container CPU Usage Report
+    </title>
+    <style>
+    
+body {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 0 24px;
+    line-height: 1.6;
+}
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #58a6ff;
+    border-bottom: 2px solid #21262d;
+    padding-bottom: 12px;
+}
+h2 {
+    color: #f0883e;
+    font-size: 20px;
+    margin-top: 32px;
+}
+h3 {
+    color: #7ee787;
+    font-size: 16px;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 14px;
+}
+th, td {
+    border: 1px solid #30363d;
+    padding: 10px 14px;
+    text-align: left;
+}
+th {
+    background-color: #161b22;
+    color: #58a6ff;
+    font-weight: 600;
+}
+tr:nth-child(even) {
+    background-color: #161b22;
+}
+ul, ol {
+    padding-left: 24px;
+}
+li {
+    margin: 4px 0;
+}
+code {
+    background-color: #161b22;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: #f85149;
+}
+p {
+    margin: 12px 0;
+}
+
+    </style>
+    </head>
+    <body>
+    <h1>
+    Container CPU Usage Report: 25-10-2026, 00:35
+    </h1>
+    <table>
+    <tr><th>Container</th><th>Classification: Label</th><th>Peak</th><th>Average</th><th>Restarts</th></tr>
+    <tr><td>checkout-api</td><td>over-provisioned</td><td>0.00%</td><td>0.00%</td><td>0</td></tr><tr><td>recommendation-engine</td><td>bursty</td><td>99.28%</td><td>51.36%</td><td>0</td></tr><tr><td>video-transcoder</td><td>right-sized</td><td>99.33%</td><td>98.56%</td><td>0</td></tr>
+    </table>
+    <p>Here is the classification summary for the three containers:</p>
+<p><strong>checkout-api (over-provisioned):</strong> Peak CPU usage is 0.00% of requested resources, which is far below what was requested. The container is holding significantly more capacity than it uses, so its request could likely be reduced.</p>
+<p><strong>recommendation-engine (bursty):</strong> Peak CPU usage reaches 99.28% of requested resources while average usage is 51.36%, a peak-to-average ratio of 1.93. This pattern of spikes that leave the container idle much of the time indicates cost inefficiency, so it is worth reviewing whether the request should be sized to the bursts or the baseline is acceptable.</p>
+<p><strong>video-transcoder (right-sized):</strong> Peak CPU usage is 99.33% and average CPU usage is 98.56% of requested resources, so the container is using nearly all of its allocation consistently. No change is indicated based on this data.</p>
+    </body>
+    </html>
+    
