@@ -1,6 +1,7 @@
 from prom_client import get_prometheus
 from classify import classify
 from narrate import narrate
+from report_html import build_html, save_report
 
 
 def main():
@@ -24,11 +25,12 @@ def main():
             classification[container] = {"label": "missing-data", "reason": "Missing data for peak, avg, or restarts", "warning": None}
 
         data_results = {"container": container, "peak": data["peak"].get(container), "avg": data["avg"].get(container), "restarts": data["restarts"].get(container), "classification": classification[container]}
-        print(data_results)
         report.append(data_results)
     return report
 
 if __name__ == "__main__":
     container_report = main()
     summary = narrate(container_report)
-    print(summary)
+    page = build_html(container_report, summary)
+    path = save_report(page)
+    print("File saved to:", path)
