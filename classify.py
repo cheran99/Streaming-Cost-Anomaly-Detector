@@ -34,20 +34,3 @@ def classify_container(container, data):
         if container not in data[name]:
             missing.append(name)
     return {"label": "missing-data", "reason": f"Missing metrics: {', '.join(missing)}", "warning": None}
-
-
-if __name__ == "__main__":
-    cases = [
-        (1.2, 0.5, 301.7, "under-provisioned"),
-        (0.0, 0.0, 301.7, "over-provisioned"),
-        (1.0, 0.9, 301.7, "right-sized"),
-        (0.3, 0.0, 301.7, "insufficient-data"),
-        (0.99, 0.41, 301.7, "bursty"),
-        (0.99, 0.66, 301.7, "right-sized"),
-        (0.99, 0.66, 5.0, "right-sized"),
-        (0.99, 0.66, 0.0, "right-sized"),
-    ]
-    for peak, avg, restarts, expected in cases:
-        classification = classify(peak, avg, restarts)
-        status = "PASS" if classification["label"] == expected else "FAIL"
-        print(f"Status: {status}, Label: {classification['label']}, Reason: {classification['reason']}, Warning: {classification['warning']}")
