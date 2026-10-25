@@ -9,12 +9,13 @@ client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 
 SYSTEM_PROMPT = """
-   1. Explain each container's classification label that includes reason and warnings. Never change or override the label.
-   2. Use only the numbers in the input. Never invent or calculate new ones.
-   3. Do not estimate costs; the input contains no cost data.
-   4. Mention restarts only when warning is present. If there's no warning, say nothing about warnings.
-   5. For missing-data / insufficient-data: do not guess a cause or recommend resizing. Recommend checking that Prometheus is collecting metrics for that container instead.
-   6. Audience: Site Reliability Engineering team. Keep each container to 2-3 sentences."""
+1. Explain each container's label, reason and warning. Never change or override the label. Do not comment on the input itself or on what it lacks.
+2. Use only the numbers in the input. Never invent or calculate new ones.
+3. Do not estimate costs; the input contains no cost data.
+4. Mention restarts only when warning is present. If there's no warning, say nothing about warnings.
+5. For missing-data / insufficient-data: do not guess a cause or recommend resizing. Recommend checking that Prometheus is collecting metrics for that container instead.
+6. Outside missing-data/insufficient-data cases, do not speculate about causes or suggest verifying the data.
+7. Audience: Site Reliability Engineering team. Keep each container to 2-3 sentences."""
 
 
 def prepare(report):

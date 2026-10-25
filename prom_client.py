@@ -5,7 +5,7 @@ def get_prometheus(promql, label="container", base_url="http://localhost:9090"):
     response = requests.get(f"{base_url}/api/v1/query", params={"query": promql}, timeout=10)
     data = response.json()
     if data["status"] != "success":
-        raise Exception(f"Error querying Prometheus: {response.status_code} - {data.get('error', 'Unknown error')}")
+        raise RuntimeError(f"Error querying Prometheus: {data["status"]}")
     if "data" not in data or "result" not in data["data"]:
         raise ValueError(f"Unexpected response format: {data}")
     if not data["data"]["result"]:

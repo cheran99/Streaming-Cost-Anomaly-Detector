@@ -7,7 +7,7 @@ def classify(peak, avg, restarts):
         reason = f"Peak CPU usage of {peak*100:.2f}% is significantly below requested resources"
     elif avg == 0.0:
         label = "insufficient-data"
-        reason = f"The numbers don\'t make sense: Peak CPU usage is {peak*100:.2f}% and average CPU usage is {avg*100:.2f}% of requested resources"
+        reason = f"The numbers don't make sense: Peak CPU usage is {peak*100:.2f}% and average CPU usage is {avg*100:.2f}% of requested resources"
     elif peak/avg > 1.5:
         label = "bursty"
         reason = f"Peak and average ratio {peak/avg:.2f} with peak usage of {peak*100:.2f}% and average usage of {avg*100:.2f}% indicates spikes in resource usage and cost inefficiency"
@@ -19,6 +19,21 @@ def classify(peak, avg, restarts):
         warning = f'{restarts:.0f} restarts in the last 7 days'
     result = {"label": label, "reason": reason, "warning": warning}
     return result
+
+
+def classify_container(container, data):
+    if container in data["peak"] and container in data["avg"] and container in data["restarts"]:
+        return classify(
+            peak=data["peak"][container], 
+            avg=data["avg"][container], 
+            restarts=data["restarts"][container],
+        )
+
+    missing = []
+    for name in ["peak", "avg", "restarts"]:
+        if container not in data[name]:
+            missing.append(name)
+    return {"label": "missing-data", "reason": f"Missing metrics: {', '.join(missing)}", "warning": None}
 
 
 if __name__ == "__main__":

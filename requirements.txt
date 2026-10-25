@@ -3,5 +3,4 @@ prometheus_client==0.26.0
 requests==2.34.2
 anthropic==1.15.0
 markdown==3.11.2
-datetime==6.0
-html==1.16
+pytest==9.1.1

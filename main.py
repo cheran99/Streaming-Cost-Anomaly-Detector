@@ -1,5 +1,5 @@
 from prom_client import get_prometheus
-from classify import classify
+from classify import classify_container
 from narrate import narrate
 from report_html import build_html, save_report
 
@@ -19,11 +19,7 @@ def main():
     classification = {}
     report = []
     for container in sorted(containers):
-        if container in data["peak"] and container in data["avg"] and container in data["restarts"]:
-            classification[container] = classify(peak=data["peak"][container], avg=data["avg"][container], restarts=data["restarts"][container])
-        else:
-            classification[container] = {"label": "missing-data", "reason": "Missing data for peak, avg, or restarts", "warning": None}
-
+        classification[container] = classify_container(container, data)
         data_results = {"container": container, "peak": data["peak"].get(container), "avg": data["avg"].get(container), "restarts": data["restarts"].get(container), "classification": classification[container]}
         report.append(data_results)
     return report
