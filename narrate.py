@@ -1,11 +1,9 @@
 import json
 import os
-from anthropic import Anthropic
 from dotenv import load_dotenv
 
 
 load_dotenv()
-client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 
 SYSTEM_PROMPT = """
@@ -34,6 +32,8 @@ def prepare(report):
 
 
 def narrate(report):
+    from anthropic import Anthropic
+    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
     prepared = prepare(report)
     response = client.messages.create(
         model="claude-haiku-5-5",
