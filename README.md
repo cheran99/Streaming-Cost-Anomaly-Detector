@@ -24,7 +24,7 @@ flowchart TD
     F --> G[reports/]  
 ```
 
-report_html.py has two inputs on purpose: classify.py decides the labels and report_html.py builds the table, so every number in the table comes from my code. Claude only writes explanations, so even if it gets something wrong, the values in the table stay correct.
+`report_html.py` has two inputs on purpose: `classify.py` decides the labels and `report_html.py` builds the table, so every number in the table comes from my code. Claude only writes explanations, so even if it gets something wrong, the values in the table stay correct.
 
 ## Tech Stack
 
