@@ -12,7 +12,19 @@ Due to poor CPU sizing, streaming platforms waste money in Kubernetes when their
 
 ## How It Works
 
+```mermaid
+flowchart TD
+    K([kind cluster: cost-demo]) -->|CPU and restarts, every 30s| A[(Prometheus)]
+    A --> |port-forward :9090|B[prom_client.py]
+    B --> C[classify.py]
+    C --> D[narrate.py]
+    D --> |labels, reasons, warnings|E([Claude API])
+    E --> |explanations|F[report_html.py]
+    C --> |facts table|F
+    F --> G[reports/]  
+```
 
+report_html.py has two inputs on purpose: classify.py decides the labels and report_html.py builds the table, so every number in the table comes from my code. Claude only writes explanations, so even if it gets something wrong, the values in the table stay correct.
 
 ## Tech Stack
 
