@@ -28,6 +28,17 @@ flowchart TD
 
 ## Tech Stack
 
+| Technology | Purpose |
+|---|---|
+| Kubernetes (`kind`) | Runs a single-node local cluster with three demo workloads in the `cost-demo` namespace |
+| Docker | Runs the kind cluster as a container |
+| Helm | Installs Prometheus into the `kind` cluster via the `kube-prometheus-stack` chart |
+| Prometheus | Scrapes CPU and restart metrics from `kind` |
+| Python `3.12` | Runs the anomaly detector tool |
+| Claude API | Uses Haiku 5.5 as the model to easily explain the classifications for each container after the classifier already made the decisions |
+| markdown | Converts Claude’s written explanation into HTML for the report |
+| pytest | Tests the classification rules, missing data, and prompt slimming without requiring a cluster or API key |
+
 
 ## How To Run It
 
