@@ -95,6 +95,9 @@ flowchart TD
     - `checkout-api`
     - `recommendation-engine`
     - `video-transcoder`
+
+- Ensure the manifest YAMLs are set to `namespace: cost-demo`
+
 - Apply the manifests:
 
     ```
@@ -126,7 +129,7 @@ flowchart TD
     ```
 
 
-### Step 5 - Port-forward `kube-prometheus-stack` chart to Prometheus UI:
+### Step 5 - Port-forward `kube-prometheus-stack` service to Prometheus UI:
 
 - Check the list of pods that are running along with the list of network services configured for them in the `monitoring` namespace:
 
@@ -140,20 +143,18 @@ flowchart TD
 - Find the network service with port `9090` and a ClusterIP that isn’t `None` (the prometheus-operated service is headless, so skip it) to connect to Prometheus UI:
 
     ```
-    kubectl port-forward -n monitoring svc/<network-service-name> 9090:9090
+    kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
     ```
 
-- Replace `<network-service-name>` with the service you found. In my setup, it was `kube-prometheus-stack-prometheus`.
-
-- Leave the port-forward running and open another terminal for the following steps
+- Leave the port-forward running and open another terminal for the following steps.
 
 ### Step 6 - Set up your Claude API key: 
 
-- To get the Claude API key, go to: https://console.anthropic.com
-- Go to API Keys and click Create Key
 - Create a file named `.env` in the repo root.
 - Add `.env` to `.gitignore` before pasting the key.
 - Run `git check-ignore .env`, which should print `.env` if it’s ignored.
+- To get the Claude API key, go to: https://console.anthropic.com
+- Go to API Keys and click Create Key.
 - Copy the key straight away and paste it into the `.env` file:
     ```
     ANTHROPIC_API_KEY=sk-ant-...
@@ -161,7 +162,7 @@ flowchart TD
 
 ### Step 7 - Run the detector tool:
 
-- Wait about 10 minutes after completing Step 4 before running this particular step so that Prometheus has enough data for the first report, otherwise it will look empty. This is because the PromQL queries use 2-minute and 5-minute windows.
+- Wait at least 30-45 minutes after completing Step 4 before running this particular step so that Prometheus has enough data for the first report, otherwise it will look empty. This is because the PromQL queries use 30-minute windows.
 
 - Create and activate the virtual environment:
 
@@ -191,11 +192,6 @@ flowchart TD
     ```
     kind delete cluster --name cost-anomaly-demo
     ```
-
-## What You Will See
-
-- Every report in `/reports` classifies each container with a label, a reason, and a warning written by Claude in plain English. 
-- The facts table shows the PromQL values the classification is based on.
 
 
 ## Key Decisions
