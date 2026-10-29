@@ -57,10 +57,9 @@ flowchart TD
 - Clone this repository to your local machine:
 
     ```
-    git clone https://github.com/<your-username>/Streaming-Cost-Anomaly-Detector
+    git clone https://github.com/cheran99/Streaming-Cost-Anomaly-Detector.git
     ```
 
-- `<your-username>` acts as a placeholder for your GitHub username.
 - Change to the working directory where this repository is stored:
 
     ```
