@@ -42,6 +42,161 @@ flowchart TD
 
 ## How To Run It
 
+### Prerequisites 
+- Docker Desktop 
+- Windows Subsystem for Linux (WSL) (Windows only)
+- Git
+- Python - `3.12` or newer
+- kind
+- kubectl
+- Helm
+- Anthropic API key (see Step 6)
+
+### Step 1 - Clone the repo:
+
+- Clone this repository to your local machine:
+
+    ```
+    git clone https://github.com/<your-username>/Streaming-Cost-Anomaly-Detector
+    ```
+
+- `<your-username>` acts as a placeholder for your GitHub username.
+- Change to the working directory where this repository is stored:
+
+    ```
+    cd Streaming-Cost-Anomaly-Detector
+    ```
+
+### Step 2 - Create `kind` cluster:
+
+- Name your cluster cost-anomaly-demo:
+
+    ```
+    kind create cluster --name cost-anomaly-demo
+    ```
+
+- Run kubectl to confirm the cluster is running and kubectl is pointed towards it:
+
+    ```
+    kubectl get nodes
+
+    kubectl cluster-info 
+    ```
+
+- Create a namespace:
+
+    ```
+    kubectl create namespace cost-demo
+    ```
+
+### Step 3 - Deploy three workloads:
+
+- The three workloads to deploy are deliberately configured to demonstrate each label and are found in the `manifests/` directory:
+    - `checkout-api`
+    - `recommendation-engine`
+    - `video-transcoder`
+- Apply the manifests:
+
+    ```
+    kubectl apply -f manifests/
+    ```
+
+- After about a minute, check that the workloads are running:
+
+    ```
+    kubectl get pods -n cost-demo
+    ```
+
+### Step 4 - Install Prometheus into the kind cluster via Helm:
+
+- Create another namespace different from `cost-demo`:
+
+    ```
+    kubectl create namespace monitoring
+    ```
+
+- Install Prometheus:
+
+    ```
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+
+    helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+    --namespace monitoring
+    ```
+
+
+### Step 5 - Port-forward `kube-prometheus-stack` chart to Prometheus UI:
+
+- Check the list of pods that are running along with the list of network services configured for them in the `monitoring` namespace:
+
+    ```
+    kubectl get pods -n monitoring
+    kubectl get svc -n monitoring
+    ```
+
+- Wait until `kubectl get pods -n monitoring` shows everything `Running`.
+
+- Find the network service with port `9090` and a ClusterIP that isn’t `None` (the prometheus-operated service is headless, so skip it) to connect to Prometheus UI:
+
+    ```
+    kubectl port-forward -n monitoring svc/<network-service-name> 9090:9090
+    ```
+
+- Replace `<network-service-name>` with the service you found. In my setup, it was `kube-prometheus-stack-prometheus`.
+
+- Leave the port-forward running and open another terminal for the following steps
+
+### Step 6 - Set up your Claude API key: 
+
+- To get the Claude API key, go to: https://console.anthropic.com
+- Go to API Keys and click Create Key
+- Create a file named `.env` in the repo root.
+- Add `.env` to `.gitignore` before pasting the key.
+- Run `git check-ignore .env`, which should print `.env` if it’s ignored.
+- Copy the key straight away and paste it into the `.env` file:
+    ```
+    ANTHROPIC_API_KEY=sk-ant-...
+    ```
+
+### Step 7 - Run the detector tool:
+
+- Wait about 10 minutes after completing Step 4 before running this particular step so that Prometheus has enough data for the first report, otherwise it will look empty. This is because the PromQL queries use 2-minute and 5-minute windows.
+
+- Create and activate the virtual environment:
+
+    ```
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+
+- Install the dependencies in `requirements.txt`:
+
+    ```
+    pip3 install -r requirements.txt
+    ```
+
+- Run `main.py`:
+
+    ```
+    python3 main.py
+    ```
+
+- Open the latest report saved in `reports/`.
+
+### Step 8 - Cleanup
+
+- Delete the `kind` cluster:
+
+    ```
+    kind delete cluster --name cost-anomaly-demo
+    ```
+
+## What You Will See
+
+- Every report in `/reports` classifies each container with a label, a reason, and a warning written by Claude in plain English. 
+- The facts table shows the PromQL values the classification is based on.
+
 
 ## Key Decisions
 
