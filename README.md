@@ -195,6 +195,11 @@ flowchart TD
 
 ## Key Decisions
 
+- **Rules decide, Claude only explains.** I classify containers with fixed rules and send Claude a slimmed report, instead of letting Claude classify and write the whole report. The same metrics always produce the same label, so the labels can be tested, while Claude’s wording varies between runs. Evidence: 11 parametrised `classify` tests, and a `prepare()` test proving raw metrics never reach Claude. Prompts are requests, code is a guarantee.
+
+- **Missing data is not zero.** When a metric is missing, the report shows N/A and labels the container `missing-data`, naming the missing metric, instead of defaulting to zero. A 0% peak would be classified as `over-provisioned`, so a monitoring gap would become a false resize recommendation. Evidence: The 4 `classify_container` unit tests prove that the missing metric is named, and a mutation test where `fmt_pct` returning 0% turned the N/A checks red.
+
+- **Model output is untrusted input.** Claude’s text and container names are escaped by `html.escape` before they go into the HTML page, instead of being inserted directly. Otherwise a container name or response containing `<script>` would run in the reader’s browser (XSS). Evidence: The `<script>` container test and a narrative check turned red when I removed the escapes.
 
 
 ## What I'd Do Differently/Next 
