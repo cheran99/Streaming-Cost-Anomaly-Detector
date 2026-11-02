@@ -202,4 +202,15 @@ flowchart TD
 - **Model output is untrusted input.** Claude’s text and container names are escaped by `html.escape` before they go into the HTML page, instead of being inserted directly. Otherwise a container name or response containing `<script>` would run in the reader’s browser (XSS). Evidence: The `<script>` container test and a narrative check turned red when I removed the escapes.
 
 
-## What I'd Do Differently/Next 
+## What I’d Do Next/Differently
+
+- **Run it in production:** Run it as a Kubernetes CronJob instead of a Deployment, because it's a scheduled task that runs once and exits. Store the API key in a Kubernetes Secret instead of `.env`.
+
+- **Keep the reports:** Save reports to a PersistentVolumeClaim (PVC) or object storage like S3, Azure Blob, or GCS, because a pod's filesystem is ephemeral meaning it disappears when the pod dies.
+
+- **Cost estimates in £:** Add £ estimates calculated in Python from a £/CPU-hour constant, never by Claude, because the maths in code can be tested whereas maths in a prompt cannot.
+
+- **Wider scope:** Detect orphaned resources and autoscaling misconfigurations, the other two cost causes from the Overview.
+
+- **Do differently:** Keep the repo in the WSL filesystem instead of `/mnt/c` mount, because cross-filesystem reads from Windows are slow and an example of this is that  importing the Anthropic SDK took approximately 24 seconds.
+ 
